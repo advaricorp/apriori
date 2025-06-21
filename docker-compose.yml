@@ -2,93 +2,121 @@ version: '3.8'
 
 services:
   # PostgreSQL Database
-  postgres:
+  db:
     image: postgres:15-alpine
     container_name: apriori_db
-    environment:
-      POSTGRES_DB: apriori_db
-      POSTGRES_USER: apriori_user
-      POSTGRES_PASSWORD: apriori_secure_password_2024
-      PGDATA: /var/lib/postgresql/data/pgdata
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/pgdata
-      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "5432:5432"
     restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-apriori}
+      POSTGRES_USER: ${POSTGRES_USER:-apriori_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-apriori_secure_pass_2024}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=es_ES.UTF-8 --lc-ctype=es_ES.UTF-8"
+    ports:
+      - "4207:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
       - apriori_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-apriori_user} -d ${POSTGRES_DB:-apriori}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
-  # Backend FastAPI
+  # FastAPI Backend
   backend:
-    build:
+    build: 
       context: ./backend
       dockerfile: Dockerfile
     container_name: apriori_backend
-    environment:
-      - DATABASE_URL=postgresql://apriori_user:apriori_secure_password_2024@postgres:5432/apriori_db
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
-      - ELEVENLABS_WEBHOOK_SECRET=${ELEVENLABS_WEBHOOK_SECRET}
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - ENVIRONMENT=production
-    volumes:
-      - ./backend:/app
-      - backend_data:/app/data
-    ports:
-      - "8000:8000"
-    depends_on:
-      - postgres
     restart: unless-stopped
+    environment:
+      # Database
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apriori_user}:${POSTGRES_PASSWORD:-apriori_secure_pass_2024}@db:5432/${POSTGRES_DB:-apriori}
+      
+      # JWT
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-your-super-secret-jwt-key-change-in-production}
+      JWT_ALGORITHM: HS256
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: 10080
+      
+      # API Keys
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-your-openai-api-key}
+      ELEVENLABS_API_KEY: ${ELEVENLABS_API_KEY:-your-elevenlabs-api-key}
+      
+      # CORS
+      CORS_ORIGINS: "http://localhost:4204,http://35.208.175.9:4204,https://apriori.enkisys.com"
+      
+      # App
+      APP_NAME: "I.A Priori"
+      APP_VERSION: "2.0.0"
+      DEBUG: ${DEBUG:-false}
+      
+    ports:
+      - "4205:8000"
+    volumes:
+      - ./logs:/app/logs
     networks:
       - apriori_network
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
-  # Frontend React
+  # React Frontend
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: apriori_frontend
-    environment:
-      - REACT_APP_API_URL=http://localhost:4200/api
-      - REACT_APP_ENVIRONMENT=production
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
     restart: unless-stopped
+    ports:
+      - "4206:3000"
     networks:
       - apriori_network
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   # Nginx Reverse Proxy
   nginx:
     image: nginx:alpine
     container_name: apriori_nginx
+    restart: unless-stopped
     ports:
-      - "4200:80"
-      - "443:443"
+      - "4204:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/ssl:/etc/nginx/ssl
-      - nginx_logs:/var/log/nginx
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./logs/nginx:/var/log/nginx
+    networks:
+      - apriori_network
     depends_on:
       - backend
       - frontend
-    restart: unless-stopped
-    networks:
-      - apriori_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   postgres_data:
     driver: local
-  backend_data:
-    driver: local
-  nginx_logs:
-    driver: local
 
 networks:
   apriori_network:
-    driver: bridge 
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16 

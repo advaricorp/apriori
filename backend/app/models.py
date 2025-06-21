@@ -361,11 +361,11 @@ class FollowUpCallResponse(BaseModel):
     needs_human_followup: bool
     
     class Config:
-        from_attributes = True
+        from_attributes = True 
 
 
 # Índices adicionales para performance
 Index('idx_interviews_org_created', Interview.organization_id, Interview.created_at)
-Index('idx_employees_org_active', Employee.organization_id, Employee.termination_date)
-Index('idx_followup_org_scheduled', FollowUpCall.organization_id, FollowUpCall.scheduled_for)
+Index('idx_employees_org_active', Employee.organization_id, Employee.exit_date)
+Index('idx_followup_org_scheduled', FollowUpCall.organization_id, FollowUpCall.scheduled_date)
 Index('idx_users_org_active', User.organization_id, User.is_active) 

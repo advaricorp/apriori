@@ -92,10 +92,10 @@ async def login(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password"
         )
-    
+        
     # Create access token
     access_token = create_access_token(data={"sub": str(user.id)})
-    
+        
     return Token(
         access_token=access_token,
         token_type="bearer",
@@ -381,8 +381,8 @@ async def get_interview_detail(
     
     if not interview:
         raise HTTPException(status_code=404, detail="Interview not found")
-    
-    return {
+        
+        return {
         "interview": {
             "id": interview.id,
             "transcript": interview.transcript,
@@ -406,34 +406,34 @@ async def create_sample_data(
     org_id = current_user.organization_id
     
     # Create sample employees
-    sample_employees = [
-        {
+        sample_employees = [
+            {
             "full_name": "Juan Pérez",
             "email": "juan.perez@ips.com",
-            "department": "Seguridad",
+                "department": "Seguridad",
             "position": "Guardia Senior",
             "manager_name": "María González"
-        },
-        {
+            },
+            {
             "full_name": "Ana López",
-            "email": "ana.lopez@ips.com", 
-            "department": "Administración",
+            "email": "ana.lopez@ips.com",
+                "department": "Administración",
             "position": "Coordinadora",
             "manager_name": "Carlos Ruiz"
-        }
-    ]
-    
-    for emp_data in sample_employees:
+            }
+        ]
+        
+        for emp_data in sample_employees:
         employee = Employee(
             organization_id=org_id,
             **emp_data,
             hire_date=datetime.utcnow() - timedelta(days=365),
             tenure_months=12
         )
-        db.add(employee)
-    
-    db.commit()
-    
+                db.add(employee)
+        
+        db.commit()
+        
     return {"message": "Sample data created successfully"}
 
 if __name__ == "__main__":

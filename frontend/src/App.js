@@ -1,79 +1,103 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { Box, CircularProgress } from '@mui/material';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from './contexts/AuthContext';
 
-import { useAuth } from './contexts/AuthContext';
+// Pages
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import DashboardLayout from './components/DashboardLayout';
-import Dashboard from './pages/Dashboard';
+import DashboardPage from './pages/DashboardPage';
 import InterviewsPage from './pages/InterviewsPage';
-import InterviewDetailPage from './pages/InterviewDetailPage';
-import EmployeesPage from './pages/EmployeesPage';
-import SettingsPage from './pages/SettingsPage';
-import ProtectedRoute from './components/ProtectedRoute';
+
+// Create theme
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#5AE386',
+      light: '#7FEB9F',
+      dark: '#3FC26B',
+    },
+    secondary: {
+      main: '#FF6B6B',
+      light: '#FF8E8E',
+      dark: '#E55555',
+    },
+    background: {
+      default: '#000000',
+      paper: '#111111',
+    },
+    text: {
+      primary: '#FFFFFF',
+      secondary: '#B0B0B0',
+    },
+  },
+  typography: {
+    fontFamily: '"Inter", "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif',
+    h1: {
+      fontFamily: '"Montserrat", sans-serif',
+      fontWeight: 700,
+    },
+    h2: {
+      fontFamily: '"Montserrat", sans-serif',
+      fontWeight: 600,
+    },
+    h3: {
+      fontFamily: '"Montserrat", sans-serif',
+      fontWeight: 600,
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+          textTransform: 'none',
+          fontWeight: 600,
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        },
+      },
+    },
+  },
+});
+
+// Create query client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function App() {
-  const { loading, isAuthenticated } = useAuth();
-
-  // Show loading spinner while checking authentication
-  if (loading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="100vh"
-        bgcolor="background.default"
-      >
-        <CircularProgress size={40} />
-      </Box>
-    );
-  }
-
   return (
-    <Routes>
-      {/* Public Routes */}
-      <Route
-        path="/login"
-        element={
-          isAuthenticated() ? <Navigate to="/dashboard" replace /> : <LoginPage />
-        }
-      />
-      <Route
-        path="/register"
-        element={
-          isAuthenticated() ? <Navigate to="/dashboard" replace /> : <RegisterPage />
-        }
-      />
-
-      {/* Protected Routes */}
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <DashboardLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Navigate to="/dashboard" replace />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="interviews" element={<InterviewsPage />} />
-        <Route path="interviews/:id" element={<InterviewDetailPage />} />
-        <Route path="employees" element={<EmployeesPage />} />
-        <Route path="settings" element={<SettingsPage />} />
-      </Route>
-
-      {/* Catch all route */}
-      <Route
-        path="*"
-        element={
-          isAuthenticated() 
-            ? <Navigate to="/dashboard" replace />
-            : <Navigate to="/login" replace />
-        }
-      />
-    </Routes>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <AuthProvider>
+          <Router>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/interviews" element={<InterviewsPage />} />
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+          </Router>
+        </AuthProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 

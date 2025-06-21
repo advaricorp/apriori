@@ -3,7 +3,7 @@
 > **Sistema completo con IA, frontend React, backend FastAPI, base de datos PostgreSQL y multitenancy**
 
 ![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
-![Status](https://img.shields.io/badge/status-Production%20Ready-green.svg)
+[![Status](https://img.shields.io/badge/status-Production%20Ready-green.svg)](https://apriori.enkisys.com)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 ## 🚀 **Características Principales**
@@ -82,7 +82,7 @@ npm start
 
 ```bash
 # API Keys (REQUERIDAS)
-OPENAI_API_KEY=sk-your-openai-api-key-here
+OPENAI_API_KEY=sk-your-openai-api-key
 ELEVENLABS_API_KEY=your-elevenlabs-api-key
 
 # Base de Datos

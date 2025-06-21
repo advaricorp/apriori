@@ -1,7 +1,8 @@
 import os
 from functools import lru_cache
-from typing import Optional
+from typing import Optional, List, Union
 from pydantic_settings import BaseSettings
+from pydantic import field_validator
 
 
 class Settings(BaseSettings):
@@ -38,12 +39,19 @@ class Settings(BaseSettings):
     environment: str = "development"
     
     # CORS
-    cors_origins: list = [
+    cors_origins: Union[List[str], str] = [
         "http://localhost:3000",
         "http://localhost:4200",
         "https://apriori.enkisys.com",
         "https://enkisys.com"
     ]
+    
+    @field_validator('cors_origins')
+    @classmethod
+    def parse_cors_origins(cls, v):
+        if isinstance(v, str):
+            return [origin.strip() for origin in v.split(',')]
+        return v
     
     # File uploads
     upload_max_size: int = 10 * 1024 * 1024  # 10MB

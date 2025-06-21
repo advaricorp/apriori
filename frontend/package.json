@@ -1,31 +1,29 @@
 {
   "name": "apriori-frontend",
-  "version": "2.0.0",
-  "description": "Frontend para sistema Apriori - Análisis de entrevistas de salida",
+  "version": "1.0.0",
+  "description": "I.A Priori - Sistema de análisis inteligente de entrevistas de salida",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.3.0",
-    "@testing-library/user-event": "^13.5.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.19",
+    "@mui/material": "^5.14.20",
+    "@mui/x-data-grid": "^6.18.1",
+    "@tanstack/react-query": "^5.8.4",
+    "axios": "^1.6.2",
+    "framer-motion": "^10.16.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.8.1",
+    "react-hook-form": "^7.48.2",
+    "react-router-dom": "^6.19.0",
+    "recharts": "^2.8.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
     "react-scripts": "5.0.1",
-    "axios": "^1.4.0",
-    "@mui/material": "^5.13.1",
-    "@mui/icons-material": "^5.13.1",
-    "@emotion/react": "^11.11.0",
-    "@emotion/styled": "^11.11.0",
-    "@mui/x-date-pickers": "^6.3.1",
-    "@mui/x-data-grid": "^6.3.1",
-    "recharts": "^2.6.2",
-    "date-fns": "^2.30.0",
-    "react-query": "^3.39.3",
-    "react-hook-form": "^7.44.3",
-    "react-hot-toast": "^2.4.1",
-    "@hookform/resolvers": "^3.1.0",
-    "yup": "^1.2.0",
-    "js-cookie": "^3.0.5",
+    "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -51,9 +49,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@types/js-cookie": "^3.0.3"
   },
   "proxy": "http://backend:8000"
 } 

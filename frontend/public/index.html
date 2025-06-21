@@ -4,66 +4,249 @@
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Apriori - Sistema de análisis de entrevistas de salida con IA" />
+    <meta name="theme-color" content="#5AE386" />
+    <meta name="description" content="I.A Priori - Sistema avanzado de análisis de entrevistas de salida con inteligencia artificial. Optimiza la retención de talento y mejora la experiencia del empleado." />
+    <meta name="keywords" content="inteligencia artificial, entrevistas de salida, retención de talento, análisis de sentimientos, recursos humanos, AI, machine learning" />
+    <meta name="author" content="I.A Priori" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://apriori.enkisys.com/" />
+    <meta property="og:title" content="I.A Priori - Análisis Inteligente de Entrevistas de Salida" />
+    <meta property="og:description" content="Sistema avanzado de análisis de entrevistas de salida con inteligencia artificial. Optimiza la retención de talento y mejora la experiencia del empleado." />
+    <meta property="og:image" content="%PUBLIC_URL%/og-image.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://apriori.enkisys.com/" />
+    <meta property="twitter:title" content="I.A Priori - Análisis Inteligente de Entrevistas de Salida" />
+    <meta property="twitter:description" content="Sistema avanzado de análisis de entrevistas de salida con inteligencia artificial." />
+    <meta property="twitter:image" content="%PUBLIC_URL%/og-image.png" />
+
+    <!-- Preconnect to external resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Google Fonts - Tipografías recomendadas en los lineamientos -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <title>Apriori - Análisis de Entrevistas</title>
+    <title>I.A Priori - Análisis Inteligente de Entrevistas de Salida</title>
     
     <style>
+      /* Prevenir flash de contenido sin estilo */
       body {
         margin: 0;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-          sans-serif;
+        padding: 0;
+        font-family: 'Inter', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        background-color: #f5f7fa;
+        background-color: #000000;
+        color: #FFFFFF;
+        overflow-x: hidden;
       }
       
-      code {
-        font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-      }
-      
-      #root {
-        min-height: 100vh;
-      }
-      
-      /* Loading spinner */
-      .loading-spinner {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      /* Loading screen */
+      .loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
         height: 100vh;
+        background: linear-gradient(135deg, #000000 0%, #111111 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease-out;
       }
       
-      .spinner {
+      .loading-logo {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 24px;
+        animation: pulse 2s ease-in-out infinite;
+      }
+      
+      .loading-text {
+        color: #5AE386;
+        font-size: 18px;
+        font-weight: 600;
+        font-family: 'Montserrat', sans-serif;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+      
+      .loading-spinner {
         width: 40px;
         height: 40px;
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #3498db;
+        border: 3px solid rgba(90, 227, 134, 0.3);
+        border-top: 3px solid #5AE386;
         border-radius: 50%;
         animation: spin 1s linear infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { 
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% { 
+          transform: scale(1.05);
+          opacity: 0.8;
+        }
       }
       
       @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
       }
+      
+      /* Hide loading screen when React loads */
+      .app-loaded .loading-screen {
+        opacity: 0;
+        pointer-events: none;
+      }
+      
+      /* Scrollbar personalizado */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #5AE386 0%, #3FC26B 100%);
+        border-radius: 4px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #7FEB9F 0%, #5AE386 100%);
+      }
+      
+      /* Selección de texto */
+      ::selection {
+        background: rgba(90, 227, 134, 0.3);
+        color: #FFFFFF;
+      }
+      
+      /* Evitar zoom en iOS */
+      input[type="text"],
+      input[type="email"],
+      input[type="password"],
+      input[type="number"],
+      textarea {
+        font-size: 16px;
+      }
+      
+      /* Optimizaciones de rendimiento */
+      * {
+        box-sizing: border-box;
+      }
+      
+      img {
+        max-width: 100%;
+        height: auto;
+      }
     </style>
   </head>
   <body>
-    <noscript>Necesitas habilitar JavaScript para ejecutar esta aplicación.</noscript>
-    <div id="root">
-      <div class="loading-spinner">
-        <div class="spinner"></div>
+    <noscript>
+      <div style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: #000000;
+        color: #FFFFFF;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Inter', sans-serif;
+        text-align: center;
+        padding: 20px;
+      ">
+        <h1 style="color: #5AE386; margin-bottom: 20px;">I.A Priori</h1>
+        <p style="color: #B0B0B0; font-size: 18px;">
+          Necesitas habilitar JavaScript para ejecutar esta aplicación.
+        </p>
+        <p style="color: #B0B0B0; margin-top: 20px;">
+          You need to enable JavaScript to run this app.
+        </p>
       </div>
+    </noscript>
+    
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+      <div class="loading-logo">
+        <svg width="80" height="80" viewBox="0 0 100 100">
+          <defs>
+            <radialGradient id="loadingGradient" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#5AE386" stop-opacity="0.9" />
+              <stop offset="70%" stop-color="#3FC26B" stop-opacity="0.7" />
+              <stop offset="100%" stop-color="#000000" stop-opacity="0.3" />
+            </radialGradient>
+          </defs>
+          <circle cx="50" cy="50" r="45" fill="url(#loadingGradient)" stroke="#5AE386" stroke-width="2" />
+          <circle cx="50" cy="50" r="5" fill="#FFFFFF" stroke="#5AE386" stroke-width="1" />
+          <circle cx="30" cy="30" r="3" fill="#5AE386" />
+          <circle cx="70" cy="30" r="3" fill="#5AE386" />
+          <circle cx="30" cy="70" r="3" fill="#5AE386" />
+          <circle cx="70" cy="70" r="3" fill="#5AE386" />
+        </svg>
+      </div>
+      <div class="loading-text">I.A PRIORI</div>
+      <div class="loading-text" style="font-size: 14px; color: #B0B0B0; margin-bottom: 24px;">
+        Cargando sistema de análisis inteligente...
+      </div>
+      <div class="loading-spinner"></div>
     </div>
+    
+    <!-- React App Container -->
+    <div id="root"></div>
+    
+    <script>
+      // Hide loading screen when React app loads
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          const loadingScreen = document.getElementById('loading-screen');
+          const body = document.body;
+          if (loadingScreen) {
+            body.classList.add('app-loaded');
+            setTimeout(() => {
+              loadingScreen.style.display = 'none';
+            }, 500);
+          }
+        }, 1000); // Minimum loading time for better UX
+      });
+      
+      // Error handling
+      window.addEventListener('error', function(e) {
+        console.error('Application error:', e);
+      });
+      
+      // Performance monitoring
+      if ('performance' in window) {
+        window.addEventListener('load', function() {
+          setTimeout(function() {
+            const perfData = performance.getEntriesByType('navigation')[0];
+            if (perfData) {
+              console.log('Page load time:', perfData.loadEventEnd - perfData.loadEventStart, 'ms');
+            }
+          }, 0);
+        });
+      }
+    </script>
   </body>
 </html> 
